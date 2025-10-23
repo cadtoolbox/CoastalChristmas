@@ -1,16 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QRistmas Character Seek-N-Find</title>
+    <title>QRistmas Station Seek-N-Find</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 10px;
             margin: 0;
-            background: url('https://images.unsplash.com/photo-1608889175785-3d5c7b3e3c1b') no-repeat center center fixed;
             background-size: cover;
             color: #fff;
         }
@@ -20,7 +18,7 @@
             padding: 10px;
             border-radius: 10px;
         }
-        .character-list {
+        .station-list {
             width: 100%;
             max-width: 600px;
             margin: 0 auto 20px auto;
@@ -38,38 +36,37 @@
             border-bottom: 1px solid #ddd;
             color: #fff;
         }
-        iframe {
+        #imageContainer img {
             width: 100%;
             max-width: 560px;
-            height: 315px;
             display: block;
-            margin: 0 auto;
-            border: none;
+            margin: 20px auto;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>GoToCoastal Christmas Character Seek-N-Find</h1>
-    <div class="character-list">
-        <table id="characterTable">
-            <thead><tr><th>Character</th><th>Status</th></tr></thead>
+    <h1>Coastal Christmas Seek-N-Find</h1>
+    <div class="station-list">
+        <table id="stationTable">
+            <thead><tr><th>Station</th><th>Status</th></tr></thead>
             <tbody></tbody>
         </table>
     </div>
-    <div id="videoContainer"></div>
+    <div id="imageContainer"></div>
 
     <script>
-        const characterMap = {
-            'A9X3B7C2D1': { name: 'Yukon Cornelius', image: 'https://example.com/yukon.jpg' },
-            'Q7W8E9R0T1': { name: 'Elf', image: 'https://example.com/elf.jpg' },
-            'Z5X6C7V8B9': { name: 'Charlie Brown & Snoopy', image: 'https://example.com/charlie.jpg' },
-            'M1N2B3V4C5': { name: 'Polar Express Conductor', image: 'https://example.com/conductor.jpg' },
-            'L0K9J8H7G6': { name: 'Frosty The Snowman', image: 'https://example.com/frosty.jpg' },
-            'T3Y4U5I6O7': { name: 'Rudolph The Red Nose Reindeer', image: 'https://example.com/rudolph.jpg' },
-            'P8O9I0U7Y6': { name: 'Ralphie', image: 'https://cadtoolbox.github.io/CoastalChristmas/images/Ralphie.jpg' }
+        const stationMap = {
+            'A9X3B7C2D1': { name: 'Station #1', image: 'https://cadtoolbox.github.io/CoastalChristmas/images/station1.jpg' },
+            'Q7W8E9R0T1': { name: 'Station #2', image: 'https://cadtoolbox.github.io/CoastalChristmas/images/station2.jpg' },
+            'Z5X6C7V8B9': { name: 'Station #3', image: 'https://cadtoolbox.github.io/CoastalChristmas/images/station3.jpg' },
+            'M1N2B3V4C5': { name: 'Station #4', image: 'https://cadtoolbox.github.io/CoastalChristmas/images/station4.jpg' },
+            'L0K9J8H7G6': { name: 'Station #5', image: 'https://cadtoolbox.github.io/CoastalChristmas/images/station5.jpg' },
+            'T3Y4U5I6O7': { name: 'Station #6', image: 'https://cadtoolbox.github.io/CoastalChristmas/images/station6.jpg' },
+            'P8O9I0U7Y6': { name: 'Station #7', image: 'https://cadtoolbox.github.io/CoastalChristmas/images/station7.jpg' }
         };
 
-        const allCharacters = Object.values(characterMap).map(c => c.name);
+        const allStations = Object.values(stationMap).map(s => s.name);
 
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -77,17 +74,17 @@
         }
 
         function loadProgress() {
-            return JSON.parse(localStorage.getItem('foundCharacters')) || [];
+            return JSON.parse(localStorage.getItem('foundStations')) || [];
         }
 
         function saveProgress(found) {
-            localStorage.setItem('foundCharacters', JSON.stringify(found));
+            localStorage.setItem('foundStations', JSON.stringify(found));
         }
 
         function updateChecklist(found) {
-            const tbody = document.querySelector('#characterTable tbody');
+            const tbody = document.querySelector('#stationTable tbody');
             tbody.innerHTML = '';
-            allCharacters.forEach(name => {
+            allStations.forEach(name => {
                 const row = document.createElement('tr');
                 const nameCell = document.createElement('td');
                 const statusCell = document.createElement('td');
@@ -99,30 +96,30 @@
             });
         }
 
-        function showVideo(videoUrl) {
-            const container = document.getElementById('videoContainer');
-            container.innerHTML = `<iframe src="${videoUrl}" allow="autoplay" allowfullscreen></iframe>`;
+        function showImage(imageUrl) {
+            const container = document.getElementById('imageContainer');
+            container.innerHTML = `<img src="${imageUrl}" alt="Station Image">`;
         }
 
         function init() {
             const reset = getQueryParam('reset');
             if (reset === 'true') {
-                localStorage.removeItem('foundCharacters');
+                localStorage.removeItem('foundStations');
                 updateChecklist([]);
-                showVideo('https://www.youtube.com/embed/reset_video?autoplay=1&mute=1');
+                document.getElementById('imageContainer').innerHTML = '';
                 return;
             }
 
             const code = getQueryParam('code');
             let found = loadProgress();
 
-            if (code && characterMap[code]) {
-                const character = characterMap[code];
-                if (!found.includes(character.name)) {
-                    found.push(character.name);
+            if (code && stationMap[code]) {
+                const station = stationMap[code];
+                if (!found.includes(station.name)) {
+                    found.push(station.name);
                     saveProgress(found);
                 }
-                showVideo(character.image);
+                showImage(station.image);
             }
 
             updateChecklist(found);
