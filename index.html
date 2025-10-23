@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRistmas Character Seek-N-Find</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 10px;
+            margin: 0;
+            background: url('https://images.unsplash.com/photo-1608889175785-3d5c7b3e3c1b') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+        h1 {
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .character-list {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            color: #fff;
+        }
+        iframe {
+            width: 100%;
+            max-width: 560px;
+            height: 315px;
+            display: block;
+            margin: 0 auto;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>QRistmas Character Seek-N-Find</h1>
+    <div class="character-list">
+        <table id="characterTable">
+            <thead><tr><th>Character</th><th>Status</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="videoContainer"></div>
+
+    <script>
+        const characterMap = {
+            'A9X3B7C2D1': { name: 'Yukon Cornelius', video: 'https://www.youtube.com/embed/1?autoplay=1&mute=1' },
+            'Q7W8E9R0T1': { name: 'Elf', video: 'https://www.youtube.com/embed/2?autoplay=1&mute=1' },
+            'Z5X6C7V8B9': { name: 'Charlie Brown & Snoopy', video: 'https://www.youtube.com/embed/3?autoplay=1&mute=1' },
+            'M1N2B3V4C5': { name: 'Polar Express Conductor', video: 'https://www.youtube.com/embed/4?autoplay=1&mute=1' },
+            'L0K9J8H7G6': { name: 'Frosty The Snowman', video: 'https://www.youtube.com/embed/5?autoplay=1&mute=1' },
+            'T3Y4U5I6O7': { name: 'Rudolph The Red Nose Reindeer', video: 'https://www.youtube.com/embed/5?autoplay=1&mute=1' },
+            'P8O9I0U7Y6': { name: 'Ralphie', video: 'https://www.youtube.com/embed/QfZE_hQ8tr8?autoplay=1&mute=1' }
+        };
+
+        const allCharacters = Object.values(characterMap).map(c => c.name);
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function loadProgress() {
+            return JSON.parse(localStorage.getItem('foundCharacters')) || [];
+        }
+
+        function saveProgress(found) {
+            localStorage.setItem('foundCharacters', JSON.stringify(found));
+        }
+
+        function updateChecklist(found) {
+            const tbody = document.querySelector('#characterTable tbody');
+            tbody.innerHTML = '';
+            allCharacters.forEach(name => {
+                const row = document.createElement('tr');
+                const nameCell = document.createElement('td');
+                const statusCell = document.createElement('td');
+                nameCell.textContent = name;
+                statusCell.textContent = found.includes(name) ? '✅' : '❌';
+                row.appendChild(nameCell);
+                row.appendChild(statusCell);
+                tbody.appendChild(row);
+            });
+        }
+
+        function showVideo(videoUrl) {
+            const container = document.getElementById('videoContainer');
+            container.innerHTML = `<iframe src="${videoUrl}" allow="autoplay" allowfullscreen></iframe>`;
+        }
+
+        function init() {
+            const reset = getQueryParam('reset');
+            if (reset === 'true') {
+                localStorage.removeItem('foundCharacters');
+                updateChecklist([]);
+                showVideo('https://www.youtube.com/embed/reset_video?autoplay=1&mute=1');
+                return;
+            }
+
+            const code = getQueryParam('code');
+            let found = loadProgress();
+
+            if (code && characterMap[code]) {
+                const character = characterMap[code];
+                if (!found.includes(character.name)) {
+                    found.push(character.name);
+                    saveProgress(found);
+                }
+                showVideo(character.video);
+            }
+
+            updateChecklist(found);
+        }
+
+        init();
+    </script>
+</body>
+</html>
