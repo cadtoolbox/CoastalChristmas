@@ -104,10 +104,11 @@
 
         function init() {
             const reset = getQueryParam('reset');
+            const resetImageUrl = 'https://cadtoolbox.github.io/CoastalChristmas/images/reset.jpg';
             if (reset === 'true') {
                 localStorage.removeItem('foundStations');
                 updateChecklist([]);
-                document.getElementById('imageContainer').innerHTML = '';
+                showImage(resetImageUrl);
                 return;
             }
 
